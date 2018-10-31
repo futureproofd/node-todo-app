@@ -1,13 +1,21 @@
 //Assertion and express testers
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
-const todos = [{text:'test todo1'},
-                {text:'test todo2'}
-              ];
+//test data
+const todos = [{
+    _id: new ObjectID(),
+    text:'test todo1'
+    },
+    {
+    _id: new ObjectID(),
+    text:'test todo2'
+    }
+];
 
 //Empty and load the database with test data
 beforeEach((done) => {
@@ -72,4 +80,32 @@ describe('GET /todos', () => {
         .end(done);
     });
     
+});
+
+
+describe('GET /todos/:id', () =>{
+    it('should return todo doc', (done) =>{
+        request(app)
+        .get(`/todos/${todos[0]._id.toHexString()}`)
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.todo.text).toBe(todos[0].text);
+        })
+        .end(done);
+        
+    });
+    
+    it('should return a 404 if valid id not found', (done) =>{
+       request(app)
+        .get(`/todos/${new ObjectID().toHexString()}`)
+        .expect(404)
+        .end(done);
+    });
+    
+    it('should return a 404 for invalid id', (done) =>{
+       request(app)
+        .get('/todos/123')
+        .expect(404)
+        .end(done);
+    });
 });
