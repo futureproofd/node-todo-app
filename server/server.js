@@ -1,3 +1,5 @@
+//config
+require('./config/config');
 //Server
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -10,9 +12,7 @@ var {ObjectID} = require('mongodb');
 
 //extras
 const _ = require('lodash');
-
 var app = express();
-const port = process.env.PORT || 3000;
 
 //middleware
 app.use(bodyParser.json());
@@ -103,8 +103,8 @@ app.patch('/todos/:id', (req,res) => {
 });
 
 //start server
-app.listen(port, () => {
-   console.log(`Started on Port ${port}`);
+app.listen(process.env.PORT, () => {
+   console.log(`Started on Port ${process.env.PORT}`);
 });
 
 //export server for testing purposes
