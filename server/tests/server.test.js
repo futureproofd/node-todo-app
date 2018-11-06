@@ -132,3 +132,24 @@ describe('DELETE /todos/:id', () => {
        });
    });
 });
+
+describe('PATCH /todos/:id',() =>{
+    it('should update the todo', (done)=>{
+        var testId = todos[0]._id.toHexString();
+        var updatedText = 'An update.';
+
+        request(app)
+            .patch(`/todos/${testId}`)
+            .send({
+                completed:true,
+                text:updatedText
+            })
+            .expect(200)
+            .expect((res) =>{
+                expect(res.body.todo.text).toBe(updatedText);
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.completedAt).toBeA('number');
+            })
+            .end(done);
+    });
+});
