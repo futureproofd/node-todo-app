@@ -102,6 +102,19 @@ app.patch('/todos/:id', (req,res) => {
     })
 });
 
+//new user
+app.post('/users',(req,res) =>{
+    var body = _.pick(req.body, ['email','password']);
+    //pass body as constructor args (only contains email/pw)
+    var user = new User(body);
+
+    user.save().then((user)=>{
+        res.send(user);
+    }).catch((e) =>{
+        res.status(400).send(e);
+    })
+});
+
 //start server
 app.listen(process.env.PORT, () => {
    console.log(`Started on Port ${process.env.PORT}`);
