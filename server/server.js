@@ -108,8 +108,11 @@ app.post('/users',(req,res) =>{
     //pass body as constructor args (only contains email/pw)
     var user = new User(body);
 
-    user.save().then((user)=>{
-        res.send(user);
+    user.save().then(() => {
+        //actually returns our promise result which is a token
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header('x-auth',token).send(user);
     }).catch((e) =>{
         res.status(400).send(e);
     })
