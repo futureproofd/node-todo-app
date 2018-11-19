@@ -119,6 +119,20 @@ app.post('/users',(req,res) =>{
     })
 });
 
+//login user
+app.post('/users/login',(req,res)=>{
+    var body = _.pick(req.body, ['email','password']);
+
+    User.findByCredentials(body.email, body.password).then(()=>{
+        return user.generateAuthToken().then((token) => {
+            res.header('x-auth',token).send(user);
+        });
+    }).catch(() =>{
+        //promise result from model
+        res.status(400).send();
+    });
+});
+
 //user authentication middleware
 app.get('/users/me', authenticate, (req,res) => {
     res.send(req.user);

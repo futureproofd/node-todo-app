@@ -5,24 +5,11 @@ const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
-
-//test data
-const todos = [{
-    _id: new ObjectID(),
-    text:'test todo1'
-    },
-    {
-    _id: new ObjectID(),
-    text:'test todo2'
-    }
-];
+const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
 //Empty and load the database with test data
-beforeEach((done) => {
-    Todo.remove({}).then(() => {
-        return Todo.insertMany(todos);
-    }).then(() => done());
-});
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 describe('POST /todos', () => {
    
@@ -151,5 +138,18 @@ describe('PATCH /todos/:id',() =>{
                 expect(res.body.todo.completedAt).toBeA('number');
             })
             .end(done);
+    });
+});
+
+describe('POST /users/me', () =>{
+    it('should return a user if authenticated', (done) =>{
+        request(app)
+        .get('/users/me')
+        .set('x-auth', users[0].tokens[0].token)
+        .expect(200)
+        .expect((res) => {
+            expect(res.body._id).toBe(users[0]._id.toHexString());
+        })
+        .end(done);
     });
 });

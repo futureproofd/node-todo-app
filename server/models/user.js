@@ -69,6 +69,27 @@ userSchema.statics.findByToken = function(token){
     });
 };
 
+userSchema.statics.findByCredentials = function(email,password){
+    var User = this;
+    //return promise to server
+    return User.findOne({email}).then((user)=>{
+        if(!user){
+            return Promise.reject();
+        }
+        //try bcrypt in a promise (not supported by default)
+        return new Promise((resolve, reject) =>{
+            //compare a users plaintext input to our hashed DB value
+            bcrypt.compare(password, user.password, (err,res)=>{
+                if(res){
+                    resolve(user);
+                }else{
+                    reject();
+                }
+            });
+        })
+    });
+};
+
 //To transform the object returned to the user (minus password)
 userSchema.methods.toJSON = function (){
     var user = this;
