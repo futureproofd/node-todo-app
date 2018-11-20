@@ -133,6 +133,15 @@ app.post('/users/login',(req,res)=>{
     });
 });
 
+//logout user
+app.delete('/users/me/token', authenticate, (req, res)=>{
+    req.user.removeUserToken(req.token).then(()=>{
+        res.status(200).send();
+    },()=>{
+        res.status(400).send();
+    });
+});
+
 //user authentication middleware
 app.get('/users/me', authenticate, (req,res) => {
     res.send(req.user);
