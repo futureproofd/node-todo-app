@@ -21,16 +21,22 @@ const users = [
     },{
         _id: userId2,
         email:'fakeemail2@fake2.com',
-        password:'123abc'
+        password:'123abc',
+        tokens:[{
+                access:'auth',
+                token: jwt.sign({_id: userId2, access:'auth'},'abc123').toString()
+        }]
     }
 ];
 
 const todos = [{
     _id: new ObjectID(),
-    text:'test todo1'
+    text:'test todo1',
+    _creator:userId1
     },{
     _id: new ObjectID(),
-    text:'test todo2'
+    text:'test todo2',
+    _creator:userId2
     }
 ];
 
