@@ -1,1 +1,3 @@
-# node-todo-app
+# Node.js TODO API w/MongoDB Backend
+
+with tests!
