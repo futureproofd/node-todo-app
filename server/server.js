@@ -1,5 +1,8 @@
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 /* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
+
 // config
 require('./config/config');
 // Server
@@ -9,7 +12,6 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 // DB & Model
 const { ObjectID } = require('mongodb');
-const { mongoose } = require('./db/mongoose');
 const { Todo } = require('./models/todo');
 const { User } = require('./models/user');
 const { authenticate } = require('./middleware/authenticate');
@@ -142,7 +144,6 @@ app.post('/users', (req, res) => {
   const body = _.pick(req.body, ['email', 'password']);
   // pass body as constructor args (only contains email/pw)
   const user = new User(body);
-
   user
     .save()
     .then(

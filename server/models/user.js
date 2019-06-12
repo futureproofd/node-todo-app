@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-undef */
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
 const validator = require('validator');
@@ -36,6 +38,7 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+// Middleware hook
 userSchema.pre('save', function (next) {
   user = this;
   if (user.isModified('password')) {
@@ -51,6 +54,9 @@ userSchema.pre('save', function (next) {
   }
 });
 
+/**
+ * Model methods: 'this' is the user model instance
+ */
 userSchema.statics.findByToken = function (token) {
   // model instance
   const User = this;
@@ -90,6 +96,9 @@ userSchema.statics.findByCredentials = function (email, password) {
   });
 };
 
+/**
+ * Instance methods: 'this' is the document object req instance
+ */
 // To transform the object returned to the user (minus password)
 userSchema.methods.toJSON = function () {
   const user = this;
@@ -98,7 +107,7 @@ userSchema.methods.toJSON = function () {
 };
 
 userSchema.methods.generateAuthToken = function () {
-  // 'this' is the calling object - the User
+  // 'this' is the calling object from the express req body
   const user = this;
   const access = 'auth';
   const token = jwt
@@ -106,8 +115,7 @@ userSchema.methods.generateAuthToken = function () {
     .toString();
   // update user model
   user.tokens = user.tokens.concat([{ access, token }]);
-
-  // returns our token as a promise
+  // returns our token as a Promise so we can update our response header
   return user.save().then(() => token);
 };
 
@@ -121,6 +129,7 @@ userSchema.methods.removeUserToken = function (token) {
   });
 };
 
+// Reference our new schema
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };
